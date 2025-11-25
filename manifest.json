@@ -15,7 +15,7 @@
       "run_at": "document_start"
     },
     {
-      "matches": ["*://inventoryidea.com/*", "*://taazabull24.com/*"],
+      "matches": ["*://inventoryidea.com/*", "*://taazabull24.com/*", "*://gadgetsweb.xyz/*"],
       "js": ["hdhub4u-timer-bypass-content-script.js"],
       "run_at": "document_start"
     },
