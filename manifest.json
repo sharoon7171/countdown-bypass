@@ -25,7 +25,7 @@
       "run_at": "document_start"
     },
     {
-      "matches": ["*://hdhub4u.gs/*", "*://hdhub4u.gd/*"],
+      "matches": ["*://hdhub4u.gs/*", "*://hdhub4u.gd/*", "*://hdhub4u.catering/*"],
       "js": ["hdhub4u-main-domain-instant-redirect-content-script.js"],
       "run_at": "document_start"
     },

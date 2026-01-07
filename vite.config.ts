@@ -28,37 +28,38 @@ export default defineConfig(({ mode }) => {
     plugins: [
       copyManifestPlugin(),
       // Obfuscate code in production builds only
+      // Using minimal obfuscation to avoid variable name conflicts
       ...(isProduction ? [
         obfuscator({
           compact: true,
-          controlFlowFlattening: true,
-          controlFlowFlatteningThreshold: 0.75,
-          deadCodeInjection: true,
-          deadCodeInjectionThreshold: 0.4,
-          debugProtection: false, // Disable for Chrome extensions
-          debugProtectionInterval: 0,
+          // Disable all complex transformations that cause variable conflicts
+          controlFlowFlattening: false,
+          deadCodeInjection: false,
+          debugProtection: false,
           disableConsoleOutput: true,
-          identifierNamesGenerator: 'hexadecimal',
+          // Use dictionary-based names to ensure uniqueness across scopes
+          identifierNamesGenerator: 'dictionary',
+          identifiersDictionary: ['hdhub4u_a', 'hdhub4u_b', 'hdhub4u_c', 'hdhub4u_d', 'hdhub4u_e', 'hdhub4u_f', 'hdhub4u_g', 'hdhub4u_h', 'hdhub4u_i', 'hdhub4u_j', 'hdhub4u_k', 'hdhub4u_l', 'hdhub4u_m', 'hdhub4u_n', 'hdhub4u_o', 'hdhub4u_p', 'hdhub4u_q', 'hdhub4u_r', 'hdhub4u_s', 'hdhub4u_t', 'hdhub4u_u', 'hdhub4u_v', 'hdhub4u_w', 'hdhub4u_x', 'hdhub4u_y', 'hdhub4u_z'],
           log: false,
-          numbersToExpressions: true,
-          renameGlobals: false, // Keep global names for Chrome extension APIs
-          selfDefending: true,
+          numbersToExpressions: false,
+          renameGlobals: false,
+          selfDefending: false,
           simplify: true,
-          splitStrings: true,
-          splitStringsChunkLength: 10,
+          splitStrings: false,
+          // Minimal string array obfuscation
           stringArray: true,
-          stringArrayCallsTransform: true,
+          stringArrayCallsTransform: false,
           stringArrayEncoding: ['base64'],
-          stringArrayIndexShift: true,
-          stringArrayRotate: true,
-          stringArrayShuffle: true,
-          stringArrayWrappersCount: 2,
-          stringArrayWrappersChainedCalls: true,
-          stringArrayWrappersParametersMaxCount: 4,
-          stringArrayWrappersType: 'function',
-          stringArrayThreshold: 0.75,
-          transformObjectKeys: true,
-          unicodeEscapeSequence: false
+          stringArrayIndexShift: false, // Disable to reduce complexity
+          stringArrayRotate: false, // Disable to reduce complexity
+          stringArrayShuffle: false, // Disable to reduce complexity
+          stringArrayWrappersCount: 0, // No wrappers to avoid conflicts
+          stringArrayWrappersChainedCalls: false,
+          stringArrayWrappersType: 'variable',
+          stringArrayThreshold: 0.3, // Lower threshold
+          transformObjectKeys: false,
+          unicodeEscapeSequence: false,
+          reservedNames: ['window', 'document', 'chrome', 'fetch', 'atob', 'location', 'Date', 'JSON']
         })
       ] : [])
     ],
