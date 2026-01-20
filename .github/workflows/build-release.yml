@@ -1,4 +1,4 @@
-name: Build and Release Chrome Extension
+  name: Build and Release Chrome Extension
 
 on:
   push:
@@ -40,66 +40,37 @@ jobs:
       run: echo "version=$(jq -r '.version' manifest.json)" >> $GITHUB_OUTPUT
 
     - name: Delete existing release (if exists)
-      uses: actions/github-script@v7
-      with:
-        script: |
-          try {
-            const releases = await github.rest.repos.listReleases({
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            });
-
-            const existingRelease = releases.data.find(release =>
-              release.tag_name === 'latest'
-            );
-
-            if (existingRelease) {
-              console.log('Deleting existing release:', existingRelease.id);
-              await github.rest.repos.deleteRelease({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                release_id: existingRelease.id
-              });
-            }
-          } catch (error) {
-            console.log('No existing release to delete or error:', error.message);
-          }
+      run: |
+        # Check if release exists and delete it
+        if gh release view latest 2>/dev/null; then
+          echo "Deleting existing latest release..."
+          gh release delete latest --yes
+        else
+          echo "No existing release to delete"
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create new release
-      id: create_release
-      uses: actions/create-release@v1
+      run: |
+        gh release create latest ./countdown-bypass-extension.zip \
+          --title "Countdown Bypass Extension v${{ steps.manifest.outputs.version }} (${{ steps.date.outputs.date }})" \
+          --notes "## Countdown Bypass Extension
+
+        **Version:** ${{ steps.manifest.outputs.version }}
+        **Build Date:** ${{ steps.date.outputs.date }}
+        **Commit:** ${{ github.sha }}
+
+        ### What's New
+        - Automatic countdown bypass for multiple websites
+        - Instant redirects and timer skips
+        - Lightweight and fast Chrome extension
+
+        ### Installation
+        1. Download the \`countdown-bypass-extension.zip\` file
+        2. Unzip the contents
+        3. Go to \`chrome://extensions/\`
+        4. Enable \"Developer mode\"
+        5. Click \"Load unpacked\" and select the unzipped folder"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: latest
-        release_name: Countdown Bypass Extension v${{ steps.manifest.outputs.version }} (${{ steps.date.outputs.date }})
-        body: |
-          ## Countdown Bypass Extension
-
-          **Version:** ${{ steps.manifest.outputs.version }}
-          **Build Date:** ${{ steps.date.outputs.date }}
-          **Commit:** ${{ github.sha }}
-
-          ### What's New
-          - Automatic countdown bypass for multiple websites
-          - Instant redirects and timer skips
-          - Lightweight and fast Chrome extension
-
-          ### Installation
-          1. Download the `countdown-bypass-extension.zip` file
-          2. Unzip the contents
-          3. Go to `chrome://extensions/`
-          4. Enable "Developer mode"
-          5. Click "Load unpacked" and select the unzipped folder
-        draft: false
-        prerelease: false
-
-    - name: Upload extension to release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./countdown-bypass-extension.zip
-        asset_name: countdown-bypass-extension.zip
-        asset_content_type: application/zip
