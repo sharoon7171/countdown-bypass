@@ -8,12 +8,14 @@
     "watch": "vite build --watch",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.254",
     "@types/node": "^24.5.2",
-    "rollup-obfuscator": "^4.1.1",
     "terser": "^5.24.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.10"

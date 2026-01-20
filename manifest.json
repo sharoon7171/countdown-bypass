@@ -38,6 +38,11 @@
       "matches": ["*://fc-lc.xyz/*"],
       "js": ["fc-lc-redirect-content-script.js"],
       "run_at": "document_end"
+    },
+    {
+      "matches": ["*://prmovies.mba/*"],
+      "js": ["prmovies-redirect-content-script.js"],
+      "run_at": "document_start"
     }
   ],
   "permissions": [
